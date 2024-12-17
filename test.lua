@@ -11,9 +11,15 @@ file.close()
 
 local function drawFrame(frame)
     for y, row in ipairs(frame) do
-        for x, pixel in ipairs(row) do
-            -- pixel is expected to be a color index (0 to 15)
-            local color = 2 ^ pixel
+        -- Each row contains blit-style data: text, foreground colors, and background colors
+        local text, fgColors, bgColors = table.unpack(row)
+        for x = 1, #text do
+            -- Extract the color index for foreground and background
+            local fgColorIndex = tonumber(fgColors:sub(x, x), 16) or 0
+            local bgColorIndex = tonumber(bgColors:sub(x, x), 16) or 0
+            
+            -- Use foreground color for the pixel
+            local color = 2 ^ fgColorIndex
             box.canvas[x][y] = color
         end
     end
